@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  HashRouter,
-  Redirect,
-  Route,
-  Switch,
-} from 'react-router-dom';
+import { useRoutes } from 'react-router-dom';
 import Whoops404 from './component/whoops404';
 import Products from './component/products';
 import Events from './component/events';
@@ -12,25 +7,38 @@ import About from './component/about';
 import Home from './component/home';
 import Contact from './component/contact';
 import './stylesheets/pages.scss';
+import Services from './component/about/services';
+import History from './component/about/history';
+import Location from './component/about/location';
 
 function App() {
-  return (
-    <HashRouter>
-      <div className="main">
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Redirect from="/history" to="/about/history" />
-          <Redirect from="/services" to="/about/services" />
-          <Redirect from="/location" to="/about/location" />
-          <Route path="/about" component={About} />
-          <Route path="/events" component={Events} />
-          <Route path="/products" component={Products} />
-          <Route path="/contact" component={Contact} />
-          <Route component={Whoops404} />
-        </Switch>
-      </div>
-    </HashRouter>
-  );
+  return useRoutes([
+    { path: '/', element: <Home /> },
+    {
+      path: 'about',
+      exact: true,
+      element: <About />,
+      children: [
+        {
+          path: 'services',
+          element: <Services />,
+        },
+        { path: 'history', element: <History /> },
+        {
+          path: 'location',
+          element: <Location />,
+        },
+      ],
+    },
+    { path: 'events', element: <Events /> },
+    { path: 'products', element: <Products /> },
+    { path: 'contact', element: <Contact /> },
+    { path: '*', element: <Whoops404 /> },
+    {
+      path: 'services',
+      redirectTo: 'about/services',
+    },
+  ]);
 }
 
 export default App;
